@@ -1,18 +1,15 @@
-resource "yandex_vpc_network" "develop" {
+module "vpc" {
+  source = "./vpc"
   name = var.vpc_name
-}
-resource "yandex_vpc_subnet" "develop" {
-  name           = var.vpc_name
-  zone           = var.default_zone
-  network_id     = yandex_vpc_network.develop.id
-  v4_cidr_blocks = var.default_cidr
+  zone = var.default_zone
+  cidr = var.default_cidr
 }
 
 module "marketing-vm" {
   source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=main"
-  network_id     = yandex_vpc_network.develop.id
+  network_id     = module.vpc.network_id
   subnet_zones   = [var.default_zone]
-  subnet_ids     = [yandex_vpc_subnet.develop.id]
+  subnet_ids     = module.vpc.subnet_id
   instance_name  = var.vm_instance_name.marketing
   instance_count = 1
   image_family   = var.vm_image_family_ubuntu.marketing
@@ -28,9 +25,9 @@ module "marketing-vm" {
 
 module "analytics-vm" {
   source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=main"
-  network_id     = yandex_vpc_network.develop.id
+  network_id     = module.vpc.network_id
   subnet_zones   = [var.default_zone]
-  subnet_ids     = [yandex_vpc_subnet.develop.id]
+  subnet_ids     = module.vpc.subnet_id
   instance_name  = var.vm_instance_name.analytics
   instance_count = 1
   image_family   = var.vm_image_family_ubuntu.analytics
