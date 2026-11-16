@@ -278,5 +278,122 @@ variable "subnets" {
 <img width="1291" height="255" alt="image" src="https://github.com/user-attachments/assets/14e14990-8265-43c3-aca1-b17048366942" />
 <img width="1315" height="274" alt="image" src="https://github.com/user-attachments/assets/1ac62f47-51ec-49b2-8975-d1d0071f90b6" />
 
+# Задача 5
+1) Создал модуль mysql со следующим содержимым main.tf
+```
+terraform {
+  required_providers {
+    yandex = {
+      source = "yandex-cloud/yandex"
+    }
+  }
+  required_version = ">1.12.0"
+}
 
+resource "yandex_mdb_mysql_cluster" "cluster" {
+  name                = var.name
+  environment         = var.environment
+  network_id          = var.network_id
+  version             = var.mysql_version
+
+  resources {
+    resource_preset_id = var.resource_preset_id
+    disk_type_id       = var.disk_type
+    disk_size          = var.disk_size
+  }
+
+  host {
+    zone             = var.zone
+    subnet_id        = var.subnet_id
+    assign_public_ip = var.public_ip
+  }
+
+  dynamic "host" {
+    for_each = range(var.ha ? 1 : 0)
+    content {
+      zone             = var.zone
+      subnet_id        = var.subnet_id
+      assign_public_ip = var.public_ip
+    }
+  }
+}
+```
+Так как cluster требует как минимум один блок хоста, то один блок создаётся всегда, а второй динамический и появляется только если **var.ha = true**
+Также создал переменные с дефолтами
+```
+variable "name" {
+  type = string
+  default = "mysql_cluster"
+}
+
+variable "environment" {
+  type = string
+  default = "PRESTABLE"
+}
+
+variable "network_id" {
+  type = string
+}
+
+variable "mysql_version" {
+  type = string
+  default = "8.0"
+}
+
+variable "disk_type" {
+  type = string
+  default = "network-hdd"
+}
+
+variable "disk_size" {
+  type = number
+  default = 10
+}
+
+variable "ha" {
+  type = bool
+  default = true
+}
+
+variable "zone" {
+  type = string
+  default = "ru-central1-a"
+}
+
+variable "subnet_id" {
+  type = string
+}
+
+variable "public_ip" {
+  type = bool
+  default = true
+}
+
+variable "resource_preset_id" {
+  type = string
+  default = "b2.medium"
+}
+```
+В root модуле создал **mysql_cluster**:
+```
+module "mysql_cluster" {
+  source = "./mysql"
+  name          = var.mysql_cluster_name
+  zone          = var.mysql_cluster_zone
+  network_id    = module.vpc.network_id
+  ha            = var.mysql_cluster_ha
+  subnet_id     = module.vpc.subnet_id_by_zone[var.mysql_cluster_zone]
+}
+```
+Для упрощения использовал подсеть и сеть, созданную в предыдущих заданиях через модуль **vpc**
+Для применения изменений использовал следующие значения
+```
+mysql_cluster_name = "cluster"
+mysql_cluster_ha = true
+mysql_cluster_zone = "ru-central1-a"
+```
+Скриншот из YC
+<img width="1311" height="410" alt="image" src="https://github.com/user-attachments/assets/a10c90bc-77c8-4888-b238-6e0ad9fb9d73" />
+
+2)
 
