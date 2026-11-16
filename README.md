@@ -171,7 +171,6 @@ mfc-admin@nb-grishunin:~/NETOLOGY/ter-homeworks/04/src$ terraform console
 ```
 # задача 2
 Terraform docs
-```
 ## Requirements
 
 | Name | Version |
@@ -210,5 +209,4 @@ No modules.
 | <a name="output_network_id"></a> [network\_id](#output\_network\_id) | n/a |
 | <a name="output_subnet"></a> [subnet](#output\_subnet) | n/a |
 | <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | n/a |
-```
 
