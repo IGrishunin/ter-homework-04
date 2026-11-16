@@ -206,7 +206,6 @@ No modules.
 
 | Name | Description |
 | ---- | ----------- |
-| <a name="output_network_id"></a> [network\_id](#output\_network\_id) | n/a |
-| <a name="output_subnet"></a> [subnet](#output\_subnet) | n/a |
-| <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | n/a |
-
+| <a name="output_network_id"></a> [network\_id](#output\_network\_id) | Выводит id созданной сети |
+| <a name="output_subnet"></a> [subnet](#output\_subnet) | Вывод всех параметров подсети |
+| <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | Выводит id созданной подсети |
