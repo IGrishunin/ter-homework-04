@@ -28,3 +28,11 @@ vm_image_family_ubuntu = {
 }
 
 vm_cloud_init_packages = ["vim", "nginx"]
+
+vpc_subnets = [
+  { zone = "ru-central1-a", cidr = "10.0.0.0/24"},
+  { zone = "ru-central1-d", cidr = "10.0.1.0/24"},
+  { zone = "ru-central1-e", cidr = "10.0.2.0/24"}
+]
+
+default_zone = ["ru-central1-d", "ru-central1-a"]

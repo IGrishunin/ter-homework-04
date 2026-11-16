@@ -15,14 +15,20 @@ variable "folder_id" {
 }
 
 variable "default_zone" {
-  type        = string
-  default     = "ru-central1-d"
+  type        = list(string)
   description = "https://cloud.yandex.ru/docs/overview/concepts/geo-scope"
 }
-variable "default_cidr" {
-  type        = list(string)
-  default     = ["10.0.1.0/24"]
-  description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
+#variable "default_cidr" {
+#  type        = list(string)
+#  default     = ["10.0.1.0/24"]
+#  description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
+#}
+
+variable "vpc_subnets" {
+  type = list(object({
+    zone = string
+    cidr = string
+  }))
 }
 
 variable "vpc_name" {

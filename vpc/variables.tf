@@ -3,13 +3,9 @@ variable "name" {
   default = "develop"
 }
 
-variable "zone" {
-  type = string
-  default = "ru-central1-d"
+variable "subnets" {
+  type = list(object({
+    zone = string
+    cidr = string
+  }))
 }
-
-variable "cidr" {
-  type = list(string)
-  default = ["10.100.0.0/24"]
-}
-

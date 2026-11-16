@@ -10,9 +10,11 @@ terraform {
 resource "yandex_vpc_network" "network" {
   name = var.name
 }
+
 resource "yandex_vpc_subnet" "subnet" {
-  name           = var.name
-  zone           = var.zone
+  for_each = { for id, subnet in var.subnets : id  => subnet }
+  name           = "${var.name}-${each.key}"
+  zone           = each.value.zone
   network_id     = yandex_vpc_network.network.id
-  v4_cidr_blocks = var.cidr
+  v4_cidr_blocks = [each.value.cidr]
 }
