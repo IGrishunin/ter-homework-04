@@ -209,3 +209,74 @@ No modules.
 | <a name="output_network_id"></a> [network\_id](#output\_network\_id) | Выводит id созданной сети |
 | <a name="output_subnet"></a> [subnet](#output\_subnet) | Вывод всех параметров подсети |
 | <a name="output_subnet_id"></a> [subnet\_id](#output\_subnet\_id) | Выводит id созданной подсети |
+
+# Задача 3
+1) Выводим **state list** командой ```terraform statelist```
+```
+data.template_file.cloudinit
+module.analytics-vm.data.yandex_compute_image.my_image
+module.analytics-vm.yandex_compute_instance.vm[0]
+module.marketing-vm.data.yandex_compute_image.my_image
+module.marketing-vm.yandex_compute_instance.vm[0]
+module.marketing-vm.yandex_compute_instance.vm[1]
+module.vpc.yandex_vpc_network.network
+module.vpc.yandex_vpc_subnet.subnet["0"]
+module.vpc.yandex_vpc_subnet.subnet["1"]
+module.vpc.yandex_vpc_subnet.subnet["2"]
+```
+2) Удаляем модуль **vpc** ```terraform state rm module.vpc```
+3) Удаляем модули **vm** ```terraform state rm module.marketing-vm``` и ```terraform state rm module.analytics-vm```
+4) Импортируем обратно командами
+```
+terraform import module.vpc.yandex_vpc_network.network enpj33hqcnf3birigo0q
+terraform import 'module.vpc.yandex_vpc_subnet.subnet["1"]' fl8jdi3vovmeat97fuht<img width="965" height="193" alt="image" src="https://github.com/user-attachments/assets/e51704d9-a0d6-4a3c-bef6-7164ab8dfe01" />
+
+terraform import 'module.vpc.yandex_vpc_subnet.subnet["0"]' e9b9knhbus9a1d0m4jkd
+terraform import 'module.vpc.yandex_vpc_subnet.subnet["2"]' ajcuacnritqksrgvhbr1
+terraform import module.marketing-vm.yandex_compute_instance.vm[0] fv46pjvbrcb9agodihdc
+terraform import module.marketing-vm.yandex_compute_instance.vm[1] fhmi8b85thgp2850n5a8
+terraform import module.analytics-vm.yandex_compute_instance.vm[0] fv4qu4j0a1k7mshev6qb
+```
+P.S. такое количество импортов т.к. это задание выполнялось после Задания 4
+P.S.S также при выполнении этого задания была изменена конечная конфигурация для Задания 4, а именно была изменена строка ```[for zone in var.default_zone : module.vpc.subnet_id_by_zone[zone]]``` на ```[for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]```. Функция try() была добавлена из-за ошибок импорта подсетей. При импорте подсети без функции try() получал ошибку 
+<img width="965" height="193" alt="image" src="https://github.com/user-attachments/assets/b3fa6062-8252-4a54-a35d-60cdfb5ae3fe" />
+Если я правильно понял, то ошибка возникала из-за того, что **module.vm** ссылался на **module.vpc** и итерировался сразу по все зонам, которых не было в state файле.
+
+Вывод ```terraform plan```
+<img width="903" height="682" alt="image" src="https://github.com/user-attachments/assets/6d431679-60d3-4f66-be8c-140735eb214a" />
+
+# Задание 4
+В модуле **vpc** ресурс **yandex_vpc_subnet** был изменён на следующий код:
+```
+resource "yandex_vpc_subnet" "subnet" {
+  for_each = { for id, subnet in var.subnets : id  => subnet }
+  name           = "${var.name}-${each.key}"
+  zone           = each.value.zone
+  network_id     = yandex_vpc_network.network.id
+  v4_cidr_blocks = [each.value.cidr]
+}
+```
+Был добавлен **for_each** который итерируется по списку **var.subnets**, где **id** - это ключ, а именно номер объектов в списке 0;1;2 и т.д., а **subnet** - это значение **value.zone**; **value.cidr** ит.д. 
+Также был добавлен **output "subnet_id_by_zone"**:
+```
+output "subnet_id_by_zone" {
+  value = { for k, v in yandex_vpc_subnet.subnet: v.zone => v.id }
+}
+```
+Здесь мы итерируемся по ресурсу **yandex_vpc_subnet.subnet**, где k - ключ, v - значение. В итоге мы делаем пару ключ значений, где зона соответствует id подсети(для удобного использования в root module)
+Также в модуле создаём переменную 
+```
+variable "subnets" {
+  type = list(object({
+    zone = string
+    cidr = string
+  }))
+}
+```
+А в **main.tf** в модуле **marketing-vm** изменяем **subnet_ids** на ```subnet_ids = [for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]```. Здесь мы циклом проходимся по всем зонам из переменной **default_zone** и каждую зону подставляем в заранее созданный output в модуле **module.vpc.subnet_id_by_zone[zone]**, а так как в **output** модуля мы указали, что **id** подсети можем получить из названия зоны, то получаем необходимый **id**. Вся эта конструкция обёрнута в квадратные скобки, чтобы в итоге мы получили список, который требует модуль **vm**. Функция try() была добавлена для того, чтобы предотвратить ошибки при импорте подсетей(см.задание 3)
+Результаты из консоли YC:
+<img width="1291" height="255" alt="image" src="https://github.com/user-attachments/assets/14e14990-8265-43c3-aca1-b17048366942" />
+<img width="1315" height="274" alt="image" src="https://github.com/user-attachments/assets/1ac62f47-51ec-49b2-8975-d1d0071f90b6" />
+
+
+
