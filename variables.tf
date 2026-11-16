@@ -1,8 +1,8 @@
 ###cloud vars
-#variable "token" {
-#  type        = string
-#  description = "OAuth-token; https://cloud.yandex.ru/docs/iam/concepts/authorization/oauth-token"
-#}
+variable "token" {
+  type        = string
+  description = "OAuth-token; https://cloud.yandex.ru/docs/iam/concepts/authorization/oauth-token"
+}
 
 variable "cloud_id" {
   type        = string
@@ -110,4 +110,18 @@ variable "vm_cloud_init_packages" {
   type = list(string)
 
   default = ["vim", "nginx"]
+}
+
+##mysql
+
+variable "mysql_cluster_name" {
+  type = string
+}
+
+variable "mysql_cluster_ha" {
+  type = bool
+}
+
+variable "mysql_cluster_zone" {
+  type = string
 }

@@ -36,3 +36,9 @@ vpc_subnets = [
 ]
 
 default_zone = ["ru-central1-d", "ru-central1-a"]
+
+mysql_cluster_name = "cluster"
+
+mysql_cluster_ha = true
+ 
+mysql_cluster_zone = "ru-central1-a"
