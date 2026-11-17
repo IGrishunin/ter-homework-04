@@ -491,4 +491,32 @@ module "mysql_cluster_content" {
 
 <img width="1840" height="553" alt="160ca2c0-d306-4c16-8740-25aa11694ed3" src="https://github.com/user-attachments/assets/ec32478c-6e35-4b36-9da5-3d77584bf00a" />
 
+# Задача 6
+Создал из примера main.tf с модулем s3:
+```
+resource "random_string" "unique_id" {
+  length  = 8
+  upper   = false
+  lower   = true
+  numeric = true
+  special = false
+}
+
+module "s3" {
+  source = "git::https://github.com/terraform-yc-modules/terraform-yc-s3.git?ref=1.0.4"
+
+  max_size = var.max_size
+  bucket_name = "simple-bucket-${random_string.unique_id.result}"
+  versioning = {
+    enabled = true
+  }
+}
+```
+Применил
+
+<img width="1353" height="1193" alt="image" src="https://github.com/user-attachments/assets/1a84ec59-1272-4f74-8107-df3ea4f72cd7" />
+
+YC
+
+<img width="1442" height="460" alt="image" src="https://github.com/user-attachments/assets/dda73b64-d56c-4698-898a-4e9c5afcc0f0" />
 
