@@ -395,5 +395,73 @@ mysql_cluster_zone = "ru-central1-a"
 Скриншот из YC
 <img width="1311" height="410" alt="image" src="https://github.com/user-attachments/assets/a10c90bc-77c8-4888-b238-6e0ad9fb9d73" />
 
-2)
+2) Добавил модуль **mysql_content**, в котором создал 2 ресурса: **yandex_mdb_mysql_database** и **yandex_mdb_mysql_user**
+```
+resource "yandex_mdb_mysql_database" "db" {
+  cluster_id = var.cluster_id
+  name       = var.db_name
+}
+
+resource "yandex_mdb_mysql_user" "user" {
+  cluster_id = var.cluster_id
+  name       = var.db_username
+  password   = var.db_password
+  permission {
+    database_name = yandex_mdb_mysql_database.db.name
+    roles         = ["ALL"]
+  }
+}
+```
+Также **variables.tf** для него:
+```
+variable "db_name" {
+  type = string
+  default = "my_db"
+}
+
+variable "cluster_id" {
+  type = string
+}
+
+variable "db_username" {
+  type = string
+  default = "mysqluser"
+}
+
+variable "db_password" {
+  type = string
+}
+```
+Для того, чтобы при вызове этого модуля в рут модуле можно было узнать **id** кластера - в модуль **mysql** добавил output:
+```
+output "cluster_id" {
+  value = yandex_mdb_mysql_cluster.cluster.id
+}
+```
+В рут модуле предварительно был создан ресурс **random_password**
+```
+resource "random_password" "db_password" {
+  length = var.random_password_length
+  special = var.random_password_special
+  upper = var.random_password_upper
+  lower = var.random_password_lower
+  numeric = var.random_password_numeric
+  override_special = var.random_password_override_special
+}
+```
+А также создан модуль **mysql_cluster_content**
+```
+module "mysql_cluster_content" {
+  source = "./mysql_content"
+  cluster_id = module.mysql_cluster.cluster_id
+  db_name = var.mysql_cluster_db_name
+  db_username = var.mysql_cluster_db_username
+  db_password = length(var.manual_db_password) > 0 ? var.manual_db_password : random_password.db_password.result
+}
+```
+В строке **db_password** используется результат random_password только если пароль не указан явно в переменной **var.manual_db_password**
+
+3) План выполнения ```terraform plan``` с одним хостом в кластере**(ha=false)**
+
+
 
