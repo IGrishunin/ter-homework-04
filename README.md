@@ -237,8 +237,9 @@ terraform import module.marketing-vm.yandex_compute_instance.vm[0] fv46pjvbrcb9a
 terraform import module.marketing-vm.yandex_compute_instance.vm[1] fhmi8b85thgp2850n5a8
 terraform import module.analytics-vm.yandex_compute_instance.vm[0] fv4qu4j0a1k7mshev6qb
 ```
-P.S. такое количество импортов т.к. это задание выполнялось после Задания 4
-P.S.S также при выполнении этого задания была изменена конечная конфигурация для Задания 4, а именно была изменена строка ```[for zone in var.default_zone : module.vpc.subnet_id_by_zone[zone]]``` на ```[for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]```. Функция try() была добавлена из-за ошибок импорта подсетей. При импорте подсети без функции try() получал ошибку 
+P.S. такое количество импортов т.к. это задание выполнялось после **Задания 4**
+
+P.S.S также при выполнении этого задания была изменена конечная конфигурация для **Задания 4**, а именно была изменена строка ```[for zone in var.default_zone : module.vpc.subnet_id_by_zone[zone]]``` на ```[for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]```. Функция **try()** была добавлена из-за ошибок импорта подсетей. При импорте подсети без функции **try()** получал ошибку 
 
 <img width="965" height="193" alt="image" src="https://github.com/user-attachments/assets/b3fa6062-8252-4a54-a35d-60cdfb5ae3fe" />
 
