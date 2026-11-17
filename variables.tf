@@ -125,3 +125,42 @@ variable "mysql_cluster_ha" {
 variable "mysql_cluster_zone" {
   type = string
 }
+
+variable "mysql_cluster_db_name" {
+  type = string
+}
+
+variable "mysql_cluster_db_username" {
+  type = string
+}
+
+##random_password
+variable "random_password_length" {
+  type = number
+}
+
+variable "random_password_special" {
+  type = bool
+}
+
+variable "random_password_upper" {
+  type = bool
+}
+
+variable "random_password_lower" {
+  type = bool
+}
+
+variable "random_password_numeric" {
+  type = bool
+}
+
+variable "random_password_override_special" {
+  type = string
+  default = ""
+}
+
+variable "manual_db_password" {
+  type = string
+  default = ""
+}
