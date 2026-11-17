@@ -485,5 +485,5 @@ module "mysql_cluster_content" {
 
 Вывод плана после изменения переменной **ha** с false на true
 
-
+1
 
