@@ -461,7 +461,14 @@ module "mysql_cluster_content" {
 ```
 В строке **db_password** используется результат random_password только если пароль не указан явно в переменной **var.manual_db_password**
 
-3) План выполнения ```terraform plan``` с одним хостом в кластере**(ha=false)**
-
+3) План выполнения ```terraform apply``` с одним хостом в кластере**(ha=false)**
+<img width="830" height="1156" alt="image" src="https://github.com/user-attachments/assets/bd1e3583-727d-4d0b-83f3-56a2ab6ef67b" />
+Вывод из консоли YC
+<img width="1836" height="514" alt="image" src="https://github.com/user-attachments/assets/cbece07b-afb6-4dcc-ad8c-0f04164bbe6c" />
+План создания БД и пользователя:
+<img width="1116" height="976" alt="image" src="https://github.com/user-attachments/assets/17b67593-6554-44bf-bfcb-2a26658fd3d0" />
+Вывод из консоли YC
+<img width="1817" height="495" alt="image" src="https://github.com/user-attachments/assets/c7b95bfa-91d1-4bb2-aabd-f9d1f74baa6e" />
+Вывод плана после изменения переменной **ha** с false на true
 
 
