@@ -239,10 +239,13 @@ terraform import module.analytics-vm.yandex_compute_instance.vm[0] fv4qu4j0a1k7m
 ```
 P.S. такое количество импортов т.к. это задание выполнялось после Задания 4
 P.S.S также при выполнении этого задания была изменена конечная конфигурация для Задания 4, а именно была изменена строка ```[for zone in var.default_zone : module.vpc.subnet_id_by_zone[zone]]``` на ```[for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]```. Функция try() была добавлена из-за ошибок импорта подсетей. При импорте подсети без функции try() получал ошибку 
+
 <img width="965" height="193" alt="image" src="https://github.com/user-attachments/assets/b3fa6062-8252-4a54-a35d-60cdfb5ae3fe" />
+
 Если я правильно понял, то ошибка возникала из-за того, что **module.vm** ссылался на **module.vpc** и итерировался сразу по все зонам, которых не было в state файле.
 
 Вывод ```terraform plan```
+
 <img width="903" height="682" alt="image" src="https://github.com/user-attachments/assets/6d431679-60d3-4f66-be8c-140735eb214a" />
 
 # Задание 4
@@ -275,6 +278,7 @@ variable "subnets" {
 ```
 А в **main.tf** в модуле **marketing-vm** изменяем **subnet_ids** на ```subnet_ids = [for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]```. Здесь мы циклом проходимся по всем зонам из переменной **default_zone** и каждую зону подставляем в заранее созданный output в модуле **module.vpc.subnet_id_by_zone[zone]**, а так как в **output** модуля мы указали, что **id** подсети можем получить из названия зоны, то получаем необходимый **id**. Вся эта конструкция обёрнута в квадратные скобки, чтобы в итоге мы получили список, который требует модуль **vm**. Функция try() была добавлена для того, чтобы предотвратить ошибки при импорте подсетей(см.задание 3)
 Результаты из консоли YC:
+
 <img width="1291" height="255" alt="image" src="https://github.com/user-attachments/assets/14e14990-8265-43c3-aca1-b17048366942" />
 <img width="1315" height="274" alt="image" src="https://github.com/user-attachments/assets/1ac62f47-51ec-49b2-8975-d1d0071f90b6" />
 
@@ -393,6 +397,7 @@ mysql_cluster_ha = true
 mysql_cluster_zone = "ru-central1-a"
 ```
 Скриншот из YC
+
 <img width="1311" height="410" alt="image" src="https://github.com/user-attachments/assets/a10c90bc-77c8-4888-b238-6e0ad9fb9d73" />
 
 2) Добавил модуль **mysql_content**, в котором создал 2 ресурса: **yandex_mdb_mysql_database** и **yandex_mdb_mysql_user**
@@ -462,13 +467,22 @@ module "mysql_cluster_content" {
 В строке **db_password** используется результат random_password только если пароль не указан явно в переменной **var.manual_db_password**
 
 3) План выполнения ```terraform apply``` с одним хостом в кластере**(ha=false)**
+
 <img width="830" height="1156" alt="image" src="https://github.com/user-attachments/assets/bd1e3583-727d-4d0b-83f3-56a2ab6ef67b" />
+
 Вывод из консоли YC
+
 <img width="1836" height="514" alt="image" src="https://github.com/user-attachments/assets/cbece07b-afb6-4dcc-ad8c-0f04164bbe6c" />
+
 План создания БД и пользователя:
+
 <img width="1116" height="976" alt="image" src="https://github.com/user-attachments/assets/17b67593-6554-44bf-bfcb-2a26658fd3d0" />
+
 Вывод из консоли YC
+
 <img width="1817" height="495" alt="image" src="https://github.com/user-attachments/assets/c7b95bfa-91d1-4bb2-aabd-f9d1f74baa6e" />
+
 Вывод плана после изменения переменной **ha** с false на true
+
 
 
