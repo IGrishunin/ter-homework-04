@@ -485,5 +485,10 @@ module "mysql_cluster_content" {
 
 Вывод плана после изменения переменной **ha** с false на true
 
-1
+<img width="1674" height="634" alt="1" src="https://github.com/user-attachments/assets/86e1109b-2c02-4bf4-a8c5-94aa6cdd17d3" />
+
+Вывод YC
+
+<img width="1840" height="553" alt="160ca2c0-d306-4c16-8740-25aa11694ed3" src="https://github.com/user-attachments/assets/ec32478c-6e35-4b36-9da5-3d77584bf00a" />
+
 
