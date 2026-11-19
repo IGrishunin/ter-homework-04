@@ -5,7 +5,7 @@ module "vpc" {
 }
 
 module "marketing-vm" {
-  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=main"
+  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=v2.1.0"
   network_id     = module.vpc.network_id
   subnet_zones   = var.default_zone
   subnet_ids     = [for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]
@@ -22,7 +22,7 @@ module "marketing-vm" {
 }
 
 module "analytics-vm" {
-  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=main"
+  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=v2.1.0"
   network_id     = module.vpc.network_id
   subnet_zones   = var.default_zone
   subnet_ids     = [for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]
