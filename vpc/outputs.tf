@@ -12,6 +12,10 @@ output "subnet_id_by_zone" {
   value = { for k, v in yandex_vpc_subnet.subnet: v.zone => v.id }
 }
 
+output "security_id_by_name" {
+  value = { for k, v in yandex_vpc_security_group.security: v.name => v.id }
+}
+
 #output "subnet" {
 #  value = yandex_vpc_subnet.subnet
 #  description = "Вывод всех параметров подсети"

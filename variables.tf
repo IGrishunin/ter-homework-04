@@ -37,28 +37,28 @@ variable "vpc_name" {
   description = "VPC network&subnet name"
 }
 
+variable "security_groups" {
+  type = map(object({
+    ingress = list(object({
+      protocol       = string
+      description    = string
+      v4_cidr_blocks = list(string)
+      port           = optional(number)
+      from_port      = optional(number)
+      to_port        = optional(number)
+    }))
+    egress  = list(object({
+      protocol       = string
+      description    = string
+      v4_cidr_blocks = list(string)
+      port           = optional(number)
+      from_port      = optional(number)
+      to_port        = optional(number)
+    }))
+  }))
+}
+
 ###common vars
-
-variable "vms_ssh_root_key" {
-  type        = string
-  default     = "your_ssh_ed25519_key"
-  description = "ssh-keygen -t ed25519"
-}
-
-###example vm_web var
-variable "vm_web_name" {
-  type        = string
-  default     = "netology-develop-platform-web"
-  description = "example vm_web_ prefix"
-}
-
-###example vm_db var
-variable "vm_db_name" {
-  type        = string
-  default     = "netology-develop-platform-db"
-  description = "example vm_db_ prefix"
-}
-
 
 variable "vm_instance_name" {
   type = map(string)
@@ -134,6 +134,10 @@ variable "mysql_cluster_db_username" {
   type = string
 }
 
+variable "mysql_cluster_security_groups" {
+  type = list(string)
+}
+
 ##random_password
 variable "random_password_length" {
   type = number
@@ -164,3 +168,4 @@ variable "manual_db_password" {
   type = string
   default = ""
 }
+
