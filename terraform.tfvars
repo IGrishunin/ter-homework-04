@@ -41,6 +41,65 @@ vpc_subnets = [
   { zone = "ru-central1-e", cidr = "10.0.2.0/24"}
 ]
 
+security_groups = {
+  sec1 = {
+    ingress = [
+      {
+        protocol       = "TCP"
+        description    = "разрешить входящий ssh"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+        port           = 22
+      },
+      { 
+        protocol       = "TCP"
+        description    = "разрешить входящий  http"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+        port           = 80
+      },
+      { 
+        protocol       = "TCP"
+        description    = "разрешить входящий https"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+        port           = 443
+      }
+    ]
+    egress = [
+      {
+        protocol       = "TCP"
+        description    = "разрешить весь исходящий трафик"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+        from_port      = 0
+        to_port        = 65365
+      }
+    ]
+  }
+  sec-database = { 
+    ingress = [
+      {
+        protocol       = "TCP"
+        description    = "разрешить входящий ssh"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+        port           = 22
+      },
+      { 
+        protocol       = "TCP"
+        description    = "разрешить входящий трафик на СУБД"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+        port           = 3306
+      }
+
+    ]
+    egress = [
+      {
+        protocol       = "TCP"
+        description    = "разрешить весь исходящий трафик"
+        v4_cidr_blocks = ["0.0.0.0/0"]
+        from_port      = 0
+        to_port        = 65365
+      }
+    ]
+  }
+}
 
 
 # mysql
@@ -49,6 +108,7 @@ mysql_cluster_ha          = true
 mysql_cluster_zone        = "ru-central1-a"
 mysql_cluster_db_name     = "test"
 mysql_cluster_db_username = "app"
+mysql_cluster_security_groups = ["sec-database"]
 
 # random_password
 random_password_length  = 16

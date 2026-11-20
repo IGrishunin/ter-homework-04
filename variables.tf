@@ -37,6 +37,27 @@ variable "vpc_name" {
   description = "VPC network&subnet name"
 }
 
+variable "security_groups" {
+  type = map(object({
+    ingress = list(object({
+      protocol       = string
+      description    = string
+      v4_cidr_blocks = list(string)
+      port           = optional(number)
+      from_port      = optional(number)
+      to_port        = optional(number)
+    }))
+    egress  = list(object({
+      protocol       = string
+      description    = string
+      v4_cidr_blocks = list(string)
+      port           = optional(number)
+      from_port      = optional(number)
+      to_port        = optional(number)
+    }))
+  }))
+}
+
 ###common vars
 
 variable "vm_instance_name" {
@@ -113,6 +134,10 @@ variable "mysql_cluster_db_username" {
   type = string
 }
 
+variable "mysql_cluster_security_groups" {
+  type = list(string)
+}
+
 ##random_password
 variable "random_password_length" {
   type = number
@@ -143,3 +168,4 @@ variable "manual_db_password" {
   type = string
   default = ""
 }
+

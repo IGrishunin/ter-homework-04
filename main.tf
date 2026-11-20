@@ -2,10 +2,12 @@ module "vpc" {
   source = "./vpc"
   name = var.vpc_name
   subnets = var.vpc_subnets
+  security_group = var.security_groups
+  folder_id = var.folder_id
 }
 
 module "marketing-vm" {
-  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=v2.1.0"
+  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=97fe51b7341df99a57ff717e42347e185232fa31"
   network_id     = module.vpc.network_id
   subnet_zones   = var.default_zone
   subnet_ids     = [for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]
@@ -22,7 +24,7 @@ module "marketing-vm" {
 }
 
 module "analytics-vm" {
-  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=v2.1.0"
+  source         = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=97fe51b7341df99a57ff717e42347e185232fa31"
   network_id     = module.vpc.network_id
   subnet_zones   = var.default_zone
   subnet_ids     = [for zone in var.default_zone : try(module.vpc.subnet_id_by_zone[zone], null)]
@@ -63,6 +65,7 @@ module "mysql_cluster" {
   network_id = module.vpc.network_id
   ha         = var.mysql_cluster_ha
   subnet_id  = module.vpc.subnet_id_by_zone[var.mysql_cluster_zone]
+  security_group_ids = local.security_group_ids
 }
 
 module "mysql_cluster_content" {

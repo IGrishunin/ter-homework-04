@@ -50,3 +50,7 @@ variable "resource_preset_id" {
   type = string
   default = "b2.medium"
 }
+
+variable "security_group_ids" {
+  type = list(string)
+}
